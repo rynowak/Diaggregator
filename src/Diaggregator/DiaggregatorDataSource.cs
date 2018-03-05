@@ -60,6 +60,21 @@ namespace Diaggregator
                 }));
 
             Endpoints.Add(new RoutePatternEndpoint(
+                "/log/{category}", 
+                async (httpContex) =>
+                {
+                    var handler = httpContex.RequestServices.GetRequiredService<LogEndpointHandler>();
+                    await handler.InvokeAsync(httpContex);
+                }, 
+                new DiaggregatorEndpointMetadata()
+                { 
+                    DisplayName = "Streaming Log Messsages",
+                    Description = "Streams log messages",
+                    ShortName = "log",
+                }));
+
+
+            Endpoints.Add(new RoutePatternEndpoint(
                 "/logs", 
                 async (httpContex) =>
                 {

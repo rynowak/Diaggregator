@@ -21,6 +21,8 @@ namespace Microsoft.Extensions.DependencyInjection
             
             services.AddSingleton<EndpointsEndpointHandler>();
 
+            services.AddSingleton<LogEndpointHandler>();
+
             services.AddSingleton<DiaggregatorLoggerProvider>();
             services.AddSingleton<ILoggerProvider>(s => s.GetRequiredService<DiaggregatorLoggerProvider>());
             services.AddSingleton<LogsEndpointHandler>();
