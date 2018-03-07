@@ -3,6 +3,7 @@
 
 using System;
 using Diaggregator;
+using Diaggregator.Endpoints;
 using Microsoft.AspNetCore.Dispatcher;
 using Microsoft.Extensions.Logging;
 
@@ -19,12 +20,13 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton<DispatcherDataSource, DiaggregatorDataSource>();
             
-            services.AddSingleton<EndpointsEndpointHandler>();
-
-            services.AddSingleton<LogEndpointHandler>();
-
             services.AddSingleton<DiaggregatorLoggerProvider>();
             services.AddSingleton<ILoggerProvider>(s => s.GetRequiredService<DiaggregatorLoggerProvider>());
+
+            services.AddSingleton<IndexEndpointHandler>();
+            services.AddSingleton<ConfigurationEndpointHandler>();
+            services.AddSingleton<EndpointsEndpointHandler>();
+            services.AddSingleton<LogStreamEndpointHandler>();
             services.AddSingleton<LogsEndpointHandler>();
             
             return services;

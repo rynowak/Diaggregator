@@ -43,7 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<RoutePatternBinderFactory>();
             services.TryAddSingleton<IConstraintFactory, DefaultConstraintFactory>();
 
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHandlerFactory, RoutePatternEndpointHandlerFactory>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHandlerFactory, HttpEndpointHandlerFactory>());
 
             return services;
         }

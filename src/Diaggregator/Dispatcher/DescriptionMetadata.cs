@@ -3,13 +3,13 @@
 
 namespace Diaggregator
 {
-    public class DiaggregatorEndpointMetadata : IDiaggregatorEndpointMetadata
+    public class DescriptionMetadata : IDescriptionMetadata
     {
-        public DiaggregatorEndpointMetadata(string shortName)
+        public DescriptionMetadata(string description)
         {
-            ShortName = shortName;
+            Description = description;
         }
-
-        public string ShortName { get; }
+        
+        public string Description { get; }
     }
 }

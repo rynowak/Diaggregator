@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Diaggregator
+namespace Diaggregator.Endpoints
 {
     public class LogsEndpointHandler
     {
@@ -34,11 +34,11 @@ namespace Diaggregator
             _loggerProvider = loggerProvider;
         }
         
-        public async Task InvokeAsync(HttpContext httpContext)
+        public async Task Invoke(HttpContext context)
         {
-            if (httpContext == null)
+            if (context == null)
             {
-                throw new ArgumentNullException(nameof(httpContext));
+                throw new ArgumentNullException(nameof(context));
             }
 
             var categories = _loggerProvider.GetCategoryNames();
@@ -61,10 +61,10 @@ namespace Diaggregator
 
             var json = JsonConvert.SerializeObject(levels);
 
-            httpContext.Response.StatusCode = 200;
-            httpContext.Response.ContentType = "application/json";
+            context.Response.StatusCode = 200;
+            context.Response.ContentType = "application/json";
 
-            await httpContext.Response.WriteAsync(json, Encoding.UTF8);
+            await context.Response.WriteAsync(json, Encoding.UTF8);
         }
     }
 }

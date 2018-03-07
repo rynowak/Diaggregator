@@ -6,49 +6,49 @@ using Microsoft.AspNetCore.Http;
 
 namespace Microsoft.AspNetCore.Dispatcher
 {
-    public class RoutePatternEndpoint : Endpoint, IRoutePatternEndpoint
+    public class HttpEndpoint : Endpoint, IRoutePatternEndpoint
     {
-        public RoutePatternEndpoint(string pattern, RequestDelegate requestDelegate, params object[] metadata)
+        public HttpEndpoint(string pattern, RequestDelegate requestDelegate, params object[] metadata)
             : this(pattern, (object)null, (string)null, requestDelegate, null, metadata)
         {
         }
 
-        public RoutePatternEndpoint(string pattern, Func<RequestDelegate, RequestDelegate> delegateFactory, params object[] metadata)
+        public HttpEndpoint(string pattern, Func<RequestDelegate, RequestDelegate> delegateFactory, params object[] metadata)
             : this(pattern, (object)null, (string)null, delegateFactory, null, metadata)
         {
         }
 
-        public RoutePatternEndpoint(string pattern, object values, RequestDelegate requestDelegate, params object[] metadata)
+        public HttpEndpoint(string pattern, object values, RequestDelegate requestDelegate, params object[] metadata)
             : this(pattern, values, null, requestDelegate, null, metadata)
         {
         }
 
-        public RoutePatternEndpoint(string pattern, object values, Func<RequestDelegate, RequestDelegate> delegateFactory, params object[] metadata)
+        public HttpEndpoint(string pattern, object values, Func<RequestDelegate, RequestDelegate> delegateFactory, params object[] metadata)
             : this(pattern, values, null, delegateFactory, null, metadata)
         {
         }
 
-        public RoutePatternEndpoint(string pattern, object values, RequestDelegate requestDelegate, string displayName, params object[] metadata)
+        public HttpEndpoint(string pattern, object values, RequestDelegate requestDelegate, string displayName, params object[] metadata)
             : this(pattern, values, null, requestDelegate, displayName, metadata)
         {
         }
 
-        public RoutePatternEndpoint(string pattern, object values, Func<RequestDelegate, RequestDelegate> delegateFactory, string displayName, params object[] metadata)
+        public HttpEndpoint(string pattern, object values, Func<RequestDelegate, RequestDelegate> delegateFactory, string displayName, params object[] metadata)
             : this(pattern, values, null, delegateFactory, displayName, metadata)
         {
         }
 
-        public RoutePatternEndpoint(string pattern, object values, string httpMethod, RequestDelegate requestDelegate, params object[] metadata)
+        public HttpEndpoint(string pattern, object values, string httpMethod, RequestDelegate requestDelegate, params object[] metadata)
             : this(pattern, values, httpMethod, requestDelegate, null, metadata)
         {
         }
 
-        public RoutePatternEndpoint(string pattern, object values, string httpMethod, Func<RequestDelegate, RequestDelegate> delegateFactory, params object[] metadata)
+        public HttpEndpoint(string pattern, object values, string httpMethod, Func<RequestDelegate, RequestDelegate> delegateFactory, params object[] metadata)
             : this(pattern, values, httpMethod, delegateFactory, null, metadata)
         {
         }
 
-        public RoutePatternEndpoint(
+        public HttpEndpoint(
             string pattern,
             object values,
             string httpMethod,
@@ -79,7 +79,7 @@ namespace Microsoft.AspNetCore.Dispatcher
             Metadata = new MetadataCollection(metadata);
         }
 
-        public RoutePatternEndpoint(
+        public HttpEndpoint(
             string pattern,
             object values,
             string httpMethod,

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Microsoft.AspNetCore.Dispatcher
 {
-    public sealed class RoutePatternEndpointHandlerFactory : IHandlerFactory
+    public sealed class HttpEndpointHandlerFactory : IHandlerFactory
     {
         public Func<RequestDelegate, RequestDelegate> CreateHandler(Endpoint endpoint)
         {
@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Dispatcher
                 throw new ArgumentNullException(nameof(endpoint));
             }
 
-            if (endpoint is RoutePatternEndpoint routePatternEndpoint)
+            if (endpoint is HttpEndpoint routePatternEndpoint)
             {
                 return routePatternEndpoint.HandlerFactory;
             }

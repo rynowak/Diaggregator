@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Dispatcher;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace Diaggregator
+namespace Diaggregator.Endpoints
 {
     public class EndpointsEndpointHandler
     {
@@ -26,11 +26,11 @@ namespace Diaggregator
             _dataSources = dataSources.ToArray();
         }
         
-        public async Task InvokeAsync(HttpContext httpContext)
+        public async Task Invoke(HttpContext context)
         {
-            if (httpContext == null)
+            if (context == null)
             {
-                throw new ArgumentNullException(nameof(httpContext));
+                throw new ArgumentNullException(nameof(context));
             }
 
             var endpoints = _dataSources
@@ -39,17 +39,17 @@ namespace Diaggregator
                 .Select(e => new 
                 { 
                     DisplayName = e.DisplayName,
-                    Url = ((RoutePatternEndpoint)e).Pattern,
+                    Url = ((HttpEndpoint)e).Pattern,
                     Metadata = e.Metadata.ToArray(), 
                 })
                 .ToArray();
 
             var json = JsonConvert.SerializeObject(endpoints);
 
-            httpContext.Response.StatusCode = 200;
-            httpContext.Response.ContentType = "application/json";
+            context.Response.StatusCode = 200;
+            context.Response.ContentType = "application/json";
 
-            await httpContext.Response.WriteAsync(json, Encoding.UTF8);
+            await context.Response.WriteAsync(json, Encoding.UTF8);
         }
     }
 }

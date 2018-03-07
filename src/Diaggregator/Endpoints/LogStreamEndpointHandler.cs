@@ -16,11 +16,11 @@ using Newtonsoft.Json;
 
 namespace Diaggregator
 {
-    public class LogEndpointHandler
+    public class LogStreamEndpointHandler
     {
         private readonly DiaggregatorLoggerProvider _loggerProvider;
 
-        public LogEndpointHandler(DiaggregatorLoggerProvider loggerProvider)
+        public LogStreamEndpointHandler(DiaggregatorLoggerProvider loggerProvider)
         {
             if (loggerProvider == null)
             {
@@ -30,34 +30,34 @@ namespace Diaggregator
             _loggerProvider = loggerProvider;
         }
         
-        public async Task InvokeAsync(HttpContext httpContext)
+        public async Task Invoke(HttpContext context)
         {
-            if (httpContext == null)
+            if (context == null)
             {
-                throw new ArgumentNullException(nameof(httpContext));
+                throw new ArgumentNullException(nameof(context));
             }
 
-            var feature = httpContext.Features.Get<IDispatcherFeature>();
+            var feature = context.Features.Get<IDispatcherFeature>();
             var categoryName = (string)feature.Values["category"];
 
             var loggers = GetLoggers(categoryName);
             if (loggers.Length == 0)
             {
-                httpContext.Response.StatusCode = 400;
+                context.Response.StatusCode = 400;
                 return;
             }
 
-            httpContext.Response.ContentType = "text/plain";
+            context.Response.ContentType = "text/plain";
 
             var faulted = new CancellationTokenSource();
-            var cancelled = CancellationTokenSource.CreateLinkedTokenSource(faulted.Token, httpContext.RequestAborted);
+            var cancelled = CancellationTokenSource.CreateLinkedTokenSource(faulted.Token, context.RequestAborted);
 
             var actionBlock = new ActionBlock<string>(async (log) => 
             {
                 try
                 
                 {
-                    await SendLog(httpContext, log, cancelled.Token);
+                    await SendLog(context, log, cancelled.Token);
                 }
                 catch (Exception)
                 {

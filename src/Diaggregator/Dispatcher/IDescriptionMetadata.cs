@@ -3,8 +3,8 @@
 
 namespace Diaggregator
 {
-    public interface IDiaggregatorEndpointMetadata
+    public interface IDescriptionMetadata
     {
-        string ShortName { get; }
+        string Description { get; }
     }
 }

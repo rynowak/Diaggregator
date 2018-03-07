@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Diaggregator.Endpoints;
 using Microsoft.AspNetCore.Dispatcher;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,78 +16,68 @@ namespace Diaggregator
     {
         public DiaggregatorDataSource()
         {
-            Endpoints.Add(new RoutePatternEndpoint("/", async (httpContext) =>
-            {
-                var dataSources = httpContext.RequestServices.GetRequiredService<IEnumerable<DispatcherDataSource>>();
-                var endpoints = dataSources
-                    .Cast<IEndpointCollectionProvider>()
-                    .SelectMany(d => d.Endpoints)
-                    .Where(e => e.Metadata.OfType<IDiaggregatorEndpointMetadata>().Any())
-                    .ToArray();
-
-                var info = new Dictionary<string, object>();
-
-                foreach (var endpoint in endpoints)
+            Endpoints.Add(new HttpEndpoint(
+                "/", 
+                new { },
+                "GET",
+                async (context) =>
                 {
-                    var metadata = endpoint.Metadata.OfType<IDiaggregatorEndpointMetadata>().First();
-                    info.Add(metadata.ShortName, new 
-                    { 
-                        DisplayName = metadata.DisplayName,
-                        Description = metadata.Description,
-                        Url = ((RoutePatternEndpoint)endpoint).Pattern,
-                    });
-                }
+                    var handler = context.RequestServices.GetRequiredService<IndexEndpointHandler>();
+                    await handler.Invoke(context);
+                },
+                "Diaggregator Info"));
 
-                var json = JsonConvert.SerializeObject(info);
-
-                httpContext.Response.StatusCode = 200;
-                httpContext.Response.ContentType = "application/json";
-
-                await httpContext.Response.WriteAsync(json, Encoding.UTF8);
-            }));
-
-            Endpoints.Add(new RoutePatternEndpoint(
-                "/endpoints", 
-                async (httpContex) =>
+            Endpoints.Add(new HttpEndpoint(
+                "/configuration",
+                new { },
+                "GET",
+                async (context) =>
                 {
-                    var handler = httpContex.RequestServices.GetRequiredService<EndpointsEndpointHandler>();
-                    await handler.InvokeAsync(httpContex);
-                }, 
-                new DiaggregatorEndpointMetadata()
-                { 
-                    DisplayName = "Endpoints",
-                    Description = "Lists all routeable endpoints in the application",
-                    ShortName = "endpoints",
-                }));
+                    var handler = context.RequestServices.GetRequiredService<ConfigurationEndpointHandler>();
+                    await handler.Invoke(context);
+                },
+                "Configuration",
+                new DiaggregatorEndpointMetadata("configuration"),
+                new DescriptionMetadata("Lists all configuration entries and values")));
 
-            Endpoints.Add(new RoutePatternEndpoint(
-                "/log/{category}", 
-                async (httpContex) =>
+            Endpoints.Add(new HttpEndpoint(
+                "/endpoints",
+                new { },
+                "GET",
+                async (context) =>
                 {
-                    var handler = httpContex.RequestServices.GetRequiredService<LogEndpointHandler>();
-                    await handler.InvokeAsync(httpContex);
-                }, 
-                new DiaggregatorEndpointMetadata()
-                { 
-                    DisplayName = "Streaming Log Messsages",
-                    Description = "Streams log messages",
-                    ShortName = "log",
-                }));
+                    var handler = context.RequestServices.GetRequiredService<EndpointsEndpointHandler>();
+                    await handler.Invoke(context);
+                },
+                "Endpoints",
+                new DiaggregatorEndpointMetadata("endpoints"),
+                new DescriptionMetadata("Lists all routeable endpoints in the application")));
 
-
-            Endpoints.Add(new RoutePatternEndpoint(
-                "/logs", 
-                async (httpContex) =>
+            Endpoints.Add(new HttpEndpoint(
+                "/log/{category}",
+                new { },
+                "GET", 
+                async (context) =>
                 {
-                    var handler = httpContex.RequestServices.GetRequiredService<LogsEndpointHandler>();
-                    await handler.InvokeAsync(httpContex);
-                }, 
-                new DiaggregatorEndpointMetadata()
-                { 
-                    DisplayName = "Logs",
-                    Description = "Lists all active logging categories",
-                    ShortName = "logs",
-                }));
+                    var handler = context.RequestServices.GetRequiredService<LogStreamEndpointHandler>();
+                    await handler.Invoke(context);
+                },
+                "Streaming Logs",
+                new DiaggregatorEndpointMetadata("logstream"),
+                new DescriptionMetadata("Streams log messages")));
+
+            Endpoints.Add(new HttpEndpoint(
+                "/logs",
+                new { },
+                "GET",
+                async (context) =>
+                {
+                    var handler = context.RequestServices.GetRequiredService<LogsEndpointHandler>();
+                    await handler.Invoke(context);
+                },
+                "Log Sources",
+                new DiaggregatorEndpointMetadata("logs"),
+                new DescriptionMetadata("Lists all active logging categories")));
         }
     }
 }
