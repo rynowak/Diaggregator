@@ -1,83 +1,38 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Diaggregator.Endpoints;
 using Microsoft.AspNetCore.Dispatcher;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace Diaggregator
 {
     public class DiaggregatorDataSource : DefaultDispatcherDataSource
     {
-        public DiaggregatorDataSource()
+        private readonly DiaggregatorItem[] _items;
+
+        public DiaggregatorDataSource(IEnumerable<DiaggregatorItem> items)
         {
-            Endpoints.Add(new HttpEndpoint(
-                "/diag", 
-                new { },
-                "GET",
-                async (context) =>
-                {
-                    var handler = context.RequestServices.GetRequiredService<IndexEndpointHandler>();
-                    await handler.Invoke(context);
-                },
-                "Diaggregator Info"));
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
 
-            Endpoints.Add(new HttpEndpoint(
-                "/diag/configuration",
-                new { },
-                "GET",
-                async (context) =>
-                {
-                    var handler = context.RequestServices.GetRequiredService<ConfigurationEndpointHandler>();
-                    await handler.Invoke(context);
-                },
-                "Configuration",
-                new DiaggregatorEndpointMetadata("configuration"),
-                new DescriptionMetadata("Lists all configuration entries and values")));
+            _items = items.OrderBy(i => i.Name).Where(i => i.GetType() != typeof(IndexEndpointHandler)).ToArray();
 
-            Endpoints.Add(new HttpEndpoint(
-                "/diag/endpoints",
-                new { },
-                "GET",
-                async (context) =>
-                {
-                    var handler = context.RequestServices.GetRequiredService<EndpointsEndpointHandler>();
-                    await handler.Invoke(context);
-                },
-                "Endpoints",
-                new DiaggregatorEndpointMetadata("endpoints"),
-                new DescriptionMetadata("Lists all routeable endpoints in the application")));
+            var index = items.OfType<IndexEndpointHandler>().Single();
+            Endpoints.Add(new HttpEndpoint("/diag", index.Invoke, index.DisplayName));
 
-            Endpoints.Add(new HttpEndpoint(
-                "/diag/log/{category}",
-                new { },
-                "GET", 
-                async (context) =>
-                {
-                    var handler = context.RequestServices.GetRequiredService<LogStreamEndpointHandler>();
-                    await handler.Invoke(context);
-                },
-                "Streaming Logs",
-                new DiaggregatorEndpointMetadata("logstream"),
-                new DescriptionMetadata("Streams log messages")));
-
-            Endpoints.Add(new HttpEndpoint(
-                "/diag/logs",
-                new { },
-                "GET",
-                async (context) =>
-                {
-                    var handler = context.RequestServices.GetRequiredService<LogsEndpointHandler>();
-                    await handler.Invoke(context);
-                },
-                "Log Sources",
-                new DiaggregatorEndpointMetadata("logs"),
-                new DescriptionMetadata("Lists all active logging categories")));
+            for (var i = 0; i < _items.Length; i++)
+            {
+                var item = _items[0];
+                Endpoints.Add(new HttpEndpoint(
+                    "/diag/" + (item.Template ?? item.Name), 
+                    item.Invoke, 
+                    item.GetType().GetCustomAttributes(inherit: true).Concat(new[] { new DiaggregatorEndpointMetadata(item.Name) })));
+            }
         }
     }
 }

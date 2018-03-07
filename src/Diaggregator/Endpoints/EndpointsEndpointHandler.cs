@@ -12,7 +12,8 @@ using Newtonsoft.Json;
 
 namespace Diaggregator.Endpoints
 {
-    public class EndpointsEndpointHandler
+    [DescriptionMetadata("Lists all routeable endpoints in the application")]
+    public class EndpointsEndpointHandler : DiaggregatorItem
     {
         private readonly DispatcherDataSource[] _dataSources;
 
@@ -25,8 +26,14 @@ namespace Diaggregator.Endpoints
 
             _dataSources = dataSources.ToArray();
         }
-        
-        public async Task Invoke(HttpContext context)
+
+        public override string DisplayName => "Endpoints";
+
+        public override string Name => "endpoints";
+
+        public override string Template => null;
+
+        public async override Task Invoke(HttpContext context)
         {
             if (context == null)
             {

@@ -2,23 +2,24 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Microsoft.AspNetCore.Dispatcher;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Diaggregator
 {
-    public class LogStreamEndpointHandler
+    [DescriptionMetadata("Streams log messages")]
+    public class LogStreamEndpointHandler : DiaggregatorItem
     {
         private readonly DiaggregatorLoggerProvider _loggerProvider;
+
+        public override string DisplayName => "Streaming Logs";
+
+        public override string Name => "logstream";
+
+        public override string Template => "log/{category}";
 
         public LogStreamEndpointHandler(DiaggregatorLoggerProvider loggerProvider)
         {
@@ -30,7 +31,7 @@ namespace Diaggregator
             _loggerProvider = loggerProvider;
         }
         
-        public async Task Invoke(HttpContext context)
+        public async override Task Invoke(HttpContext context)
         {
             if (context == null)
             {

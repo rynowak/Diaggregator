@@ -11,7 +11,8 @@ using Newtonsoft.Json;
 
 namespace Diaggregator.Endpoints
 {
-    public class ConfigurationEndpointHandler
+    [DescriptionMetadata("Lists all configuration entries and values")]
+    public class ConfigurationEndpointHandler : DiaggregatorItem
     {
         private readonly IConfiguration _configuration;
 
@@ -25,7 +26,13 @@ namespace Diaggregator.Endpoints
             _configuration = configuration;
         }
 
-        public async Task Invoke(HttpContext context)
+        public override string DisplayName => "Configuration";
+
+        public override string Name => "configuration";
+
+        public override string Template => null;
+
+        public async override Task Invoke(HttpContext context)
         {
             if (context == null)
             {

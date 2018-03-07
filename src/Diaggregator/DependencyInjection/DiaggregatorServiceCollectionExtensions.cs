@@ -25,11 +25,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<DiaggregatorLoggerProvider>();
             services.AddSingleton<ILoggerProvider>(s => s.GetRequiredService<DiaggregatorLoggerProvider>());
 
-            services.AddSingleton<IndexEndpointHandler>();
-            services.AddSingleton<ConfigurationEndpointHandler>();
-            services.AddSingleton<EndpointsEndpointHandler>();
-            services.AddSingleton<LogStreamEndpointHandler>();
-            services.AddSingleton<LogsEndpointHandler>();
+            services.AddSingleton<DiaggregatorItem, IndexEndpointHandler>();
+            services.AddSingleton<DiaggregatorItem, ConfigurationEndpointHandler>();
+            services.AddSingleton<DiaggregatorItem, EndpointsEndpointHandler>();
+            services.AddSingleton<DiaggregatorItem, LogStreamEndpointHandler>();
+            services.AddSingleton<DiaggregatorItem, LogsEndpointHandler>();
 
             return services;
         }

@@ -13,28 +13,23 @@ using Newtonsoft.Json;
 
 namespace Diaggregator.Endpoints
 {
-    public class IndexEndpointHandler
+    public class IndexEndpointHandler : DiaggregatorItem
     {
-        private readonly IEndpointCollectionProvider[] _endpointProviders;
+        public override string DisplayName => "Diaggregator Info";
 
-        public IndexEndpointHandler(IEnumerable<DispatcherDataSource> dataSources)
-        {
-            if (dataSources == null)
-            {
-                throw new ArgumentNullException(nameof(dataSources));
-            }
-            
-            _endpointProviders = dataSources.Cast<IEndpointCollectionProvider>().ToArray();
-        }
+        public override string Name => "index";
 
-        public async Task Invoke(HttpContext context)
+        public override string Template => null;
+
+        public async override Task Invoke(HttpContext context)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var endpoints = _endpointProviders
+            var endpointProviders = context.RequestServices.GetRequiredService<IEnumerable<DispatcherDataSource>>().Cast<IEndpointCollectionProvider>().ToArray();
+            var endpoints = endpointProviders
                 .SelectMany(d => d.Endpoints)
                 .Where(e => e.Metadata.OfType<IDiaggregatorEndpointMetadata>().Any())
                 .ToArray();

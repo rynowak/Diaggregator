@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Dispatcher;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Diaggregator.Endpoints
 {
-    public class LogsEndpointHandler
+    [DescriptionMetadata("Lists all active logging categories")]
+    public class LogsEndpointHandler : DiaggregatorItem
     {
         private readonly ILoggerFactory _loggerFactory;
         private readonly DiaggregatorLoggerProvider _loggerProvider;
@@ -33,8 +33,14 @@ namespace Diaggregator.Endpoints
             _loggerFactory = loggerFactory;
             _loggerProvider = loggerProvider;
         }
-        
-        public async Task Invoke(HttpContext context)
+
+        public override string DisplayName => "Log Sources";
+
+        public override string Name => "logs";
+
+        public override string Template => null;
+
+        public async override Task Invoke(HttpContext context)
         {
             if (context == null)
             {
