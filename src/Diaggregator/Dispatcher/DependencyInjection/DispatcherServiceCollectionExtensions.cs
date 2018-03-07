@@ -32,6 +32,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<ITemplateFactoryComponent, RoutePatternTemplateFactory>();
             services.TryAddSingleton<RoutePatternAddressSelector>();
 
+            // HTTP endpoints
+            services.TryAddSingleton<EndpointSelector, HttpMethodEndpointSelector>();
+
             //
             // Default matcher
             //

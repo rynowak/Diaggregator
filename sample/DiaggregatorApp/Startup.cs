@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DiaggregatorApp
@@ -16,6 +15,27 @@ namespace DiaggregatorApp
             services.AddDispatcher();
             services.AddDiaggregator();
             services.AddMvc();
+
+            #region SHHHHH
+            services.AddMvc(options => options.Conventions.Add(new AuthorizationMetadataConvention()));
+            #endregion
+
+            services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new PathString("/Account/Login/");
+                    options.AccessDeniedPath = new PathString("/Account/Forbidden/");
+                });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Members", p => p.RequireAuthenticatedUser());
+                options.AddPolicy("Admins", p => p.RequireRole("admin"));
+
+                options.DefaultPolicy = options.GetPolicy("Members");
+            });
+            services.AddAuthorizationPolicyEvaluator();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -26,6 +46,11 @@ namespace DiaggregatorApp
             }
 
             app.UseDispatcher();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseStaticFiles();
         }
     }
 }

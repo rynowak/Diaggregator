@@ -1,0 +1,13 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login</h2>
+
+<form action="/Account/Login" method="post">
+    <label>How much should I trust you? (scale of 1-10)</label>
+    <input asp-for="TrustLevel" />
+    <input type="submit" />
+</form>
+

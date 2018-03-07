@@ -2,18 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Diaggregator.Endpoints;
 using Microsoft.AspNetCore.Dispatcher;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace Diaggregator.Mvc
 {
@@ -43,7 +38,7 @@ namespace Diaggregator.Mvc
                 Endpoints.Add(new HttpEndpoint(
                     action.AttributeRouteInfo.Template,
                     action.RouteValues,
-                    action.ActionConstraints.OfType<HttpMethodActionConstraint>().FirstOrDefault()?.HttpMethods.FirstOrDefault(),
+                    action.ActionConstraints?.OfType<HttpMethodActionConstraint>().FirstOrDefault()?.HttpMethods.FirstOrDefault(),
                     async (context) =>
                     {
                         var values = context.Features.Get<IDispatcherFeature>().Values;
