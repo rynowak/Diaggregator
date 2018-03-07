@@ -17,7 +17,7 @@ namespace Diaggregator
         public DiaggregatorDataSource()
         {
             Endpoints.Add(new HttpEndpoint(
-                "/", 
+                "/diag", 
                 new { },
                 "GET",
                 async (context) =>
@@ -28,7 +28,7 @@ namespace Diaggregator
                 "Diaggregator Info"));
 
             Endpoints.Add(new HttpEndpoint(
-                "/configuration",
+                "/diag/configuration",
                 new { },
                 "GET",
                 async (context) =>
@@ -41,7 +41,7 @@ namespace Diaggregator
                 new DescriptionMetadata("Lists all configuration entries and values")));
 
             Endpoints.Add(new HttpEndpoint(
-                "/endpoints",
+                "/diag/endpoints",
                 new { },
                 "GET",
                 async (context) =>
@@ -54,7 +54,7 @@ namespace Diaggregator
                 new DescriptionMetadata("Lists all routeable endpoints in the application")));
 
             Endpoints.Add(new HttpEndpoint(
-                "/log/{category}",
+                "/diag/log/{category}",
                 new { },
                 "GET", 
                 async (context) =>
@@ -67,7 +67,7 @@ namespace Diaggregator
                 new DescriptionMetadata("Streams log messages")));
 
             Endpoints.Add(new HttpEndpoint(
-                "/logs",
+                "/diag/logs",
                 new { },
                 "GET",
                 async (context) =>

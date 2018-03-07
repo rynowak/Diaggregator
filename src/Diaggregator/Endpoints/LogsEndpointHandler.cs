@@ -48,7 +48,7 @@ namespace Diaggregator.Endpoints
                 levels.Add(category, LogLevel.Critical.ToString());
 
                 var logger = _loggerFactory.CreateLogger(category);
-                foreach (var level in Enum.GetValues(typeof(LogLevel)))
+                foreach (var level in Enum.GetValues(typeof(LogLevel)).Cast<object>().Reverse())
                 {
                     if (!logger.IsEnabled((LogLevel)level))
                     {

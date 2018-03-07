@@ -40,7 +40,7 @@ namespace Diaggregator.Endpoints
                 { 
                     DisplayName = e.DisplayName,
                     Url = ((HttpEndpoint)e).Pattern,
-                    Metadata = e.Metadata.ToArray(), 
+                    Metadata = e.Metadata.Select(m => new MetadataItem(m)).ToArray(), 
                 })
                 .ToArray();
 
@@ -50,6 +50,23 @@ namespace Diaggregator.Endpoints
             context.Response.ContentType = "application/json";
 
             await context.Response.WriteAsync(json, Encoding.UTF8);
+        }
+
+        private class MetadataItem
+        {
+            public MetadataItem(object item)
+            {
+                Item = item;
+
+                Type = item.GetType().FullName;
+                Interfaces = item.GetType().GetInterfaces().Select(i => i.FullName).ToArray();
+            }
+
+            public object Item { get; set; }
+
+            public string Type { get; set; }
+
+            public string[] Interfaces { get; set; }
         }
     }
 }

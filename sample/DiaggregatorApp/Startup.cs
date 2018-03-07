@@ -15,6 +15,7 @@ namespace DiaggregatorApp
         {
             services.AddDispatcher();
             services.AddDiaggregator();
+            services.AddMvc();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
