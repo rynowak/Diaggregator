@@ -17,7 +17,7 @@ namespace DiaggregatorApp
             services.AddMvc();
 
             #region SHHHHH
-            services.AddMvc(options => options.Conventions.Add(new AuthorizationMetadataConvention()));
+            services.AddMvc(options => options.Conventions.Add(new TurnOffMvcAuthorizationSupport()));
             #endregion
 
             services
@@ -48,7 +48,10 @@ namespace DiaggregatorApp
             app.UseDispatcher();
 
             app.UseAuthentication();
+
+            #region SHHHHHH
             app.UseAuthorization();
+            #endregion
 
             app.UseStaticFiles();
         }

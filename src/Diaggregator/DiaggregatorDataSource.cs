@@ -23,15 +23,16 @@ namespace Diaggregator
             _items = items.OrderBy(i => i.Name).Where(i => i.GetType() != typeof(IndexEndpointHandler)).ToArray();
 
             var index = items.OfType<IndexEndpointHandler>().Single();
-            Endpoints.Add(new HttpEndpoint("/diag", index.Invoke, index.DisplayName));
+            Endpoints.Add(new HttpEndpoint("/diag", index.Invoke, index.DisplayName, Array.Empty<object>()));
 
             for (var i = 0; i < _items.Length; i++)
             {
-                var item = _items[0];
+                var item = _items[i];
                 Endpoints.Add(new HttpEndpoint(
-                    "/diag/" + (item.Template ?? item.Name), 
-                    item.Invoke, 
-                    item.GetType().GetCustomAttributes(inherit: true).Concat(new[] { new DiaggregatorEndpointMetadata(item.Name) })));
+                    "/diag/" + (item.Template ?? item.Name),
+                    item.Invoke,
+                    item.DisplayName,
+                    item.GetType().GetCustomAttributes(inherit: true)));
             }
         }
     }

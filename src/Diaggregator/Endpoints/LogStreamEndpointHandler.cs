@@ -5,11 +5,13 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Dispatcher;
 using Microsoft.AspNetCore.Http;
 
 namespace Diaggregator
 {
+    //[Authorize("Admins")]
     [DescriptionMetadata("Streams log messages")]
     public class LogStreamEndpointHandler : DiaggregatorItem
     {

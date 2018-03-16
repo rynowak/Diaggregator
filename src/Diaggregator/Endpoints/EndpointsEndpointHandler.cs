@@ -6,27 +6,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Dispatcher;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace Diaggregator.Endpoints
 {
+    //[Authorize("Members")]
     [DescriptionMetadata("Lists all routeable endpoints in the application")]
     public class EndpointsEndpointHandler : DiaggregatorItem
     {
-        private readonly DispatcherDataSource[] _dataSources;
-
-        public EndpointsEndpointHandler(IEnumerable<DispatcherDataSource> dataSources)
-        {
-            if (dataSources == null)
-            {
-                throw new ArgumentNullException(nameof(dataSources));
-            }
-
-            _dataSources = dataSources.ToArray();
-        }
-
         public override string DisplayName => "Endpoints";
 
         public override string Name => "endpoints";
@@ -40,8 +31,8 @@ namespace Diaggregator.Endpoints
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var endpoints = _dataSources
-                .Cast<IEndpointCollectionProvider>()
+            var endpointProviders = context.RequestServices.GetRequiredService<IEnumerable<DispatcherDataSource>>().Cast<IEndpointCollectionProvider>().ToArray();
+            var endpoints = endpointProviders
                 .SelectMany(d => d.Endpoints)
                 .Select(e => new 
                 { 

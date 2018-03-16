@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Dispatcher;
@@ -28,22 +29,20 @@ namespace Diaggregator.Endpoints
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var endpointProviders = context.RequestServices.GetRequiredService<IEnumerable<DispatcherDataSource>>().Cast<IEndpointCollectionProvider>().ToArray();
-            var endpoints = endpointProviders
-                .SelectMany(d => d.Endpoints)
-                .Where(e => e.Metadata.OfType<IDiaggregatorEndpointMetadata>().Any())
+            var items = context.RequestServices.GetRequiredService<IEnumerable<DiaggregatorItem>>()
+                .OrderBy(i => i.Name)
+                .Where(i => i.GetType() != typeof(IndexEndpointHandler))
                 .ToArray();
 
             var info = new Dictionary<string, object>();
 
-            foreach (var endpoint in endpoints)
+            foreach (var item in items)
             {
-                var metadata = endpoint.Metadata.OfType<IDiaggregatorEndpointMetadata>().First();
-                info.Add(metadata.ShortName, new
+                info.Add(item.Name, new
                 {
-                    DisplayName = endpoint.DisplayName,
-                    Description = endpoint.Metadata.OfType<IDescriptionMetadata>().FirstOrDefault()?.Description,
-                    Url = (endpoint as HttpEndpoint)?.Pattern,
+                    DisplayName = item.DisplayName,
+                    Description = item.GetType().GetCustomAttributes().OfType<IDescriptionMetadata>().FirstOrDefault()?.Description,
+                    Url = "/diag/" + (item.Template ?? item.Name),
                 });
             }
 

@@ -5,12 +5,14 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace Diaggregator.Endpoints
 {
+    [Authorize("Admins")]
     [DescriptionMetadata("Lists all configuration entries and values")]
     public class ConfigurationEndpointHandler : DiaggregatorItem
     {

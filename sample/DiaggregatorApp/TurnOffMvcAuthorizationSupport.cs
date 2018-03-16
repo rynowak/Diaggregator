@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace DiaggregatorApp
 {
-    internal class AuthorizationMetadataConvention : IActionModelConvention
+    internal class TurnOffMvcAuthorizationSupport : IActionModelConvention
     {
         public void Apply(ActionModel action)
         {
