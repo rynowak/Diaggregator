@@ -6,6 +6,7 @@ using Diaggregator;
 using Diaggregator.Endpoints;
 using Diaggregator.Mvc;
 using Microsoft.AspNetCore.Dispatcher;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -19,6 +20,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
+            services.AddSingleton<IHostedService, DiaggregatorHostedService>();
+            services.AddSingleton<DataStreamRegistry, DefaultDataStreamRegistry>();
+
+            services.AddSingleton<IDataStreamLifetime, ConfigurationDataStream>();
+
             services.AddSingleton<DispatcherDataSource, DiaggregatorDataSource>();
             services.AddSingleton<DispatcherDataSource, MvcDispatcherDataSource>();
             
@@ -26,7 +32,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ILoggerProvider>(s => s.GetRequiredService<DiaggregatorLoggerProvider>());
 
             services.AddSingleton<DiaggregatorItem, IndexEndpointHandler>();
-            services.AddSingleton<DiaggregatorItem, ConfigurationEndpointHandler>();
+            services.AddSingleton<DiaggregatorItem>((s) =>
+            {
+                var registry = s.GetRequiredService<DataStreamRegistry>();
+                return new DataStreamEndpointHandler(registry, "configuration", "Configuration", "configuration");
+            });
             services.AddSingleton<DiaggregatorItem, EndpointsEndpointHandler>();
             services.AddSingleton<DiaggregatorItem, LogStreamEndpointHandler>();
             services.AddSingleton<DiaggregatorItem, LogsEndpointHandler>();
