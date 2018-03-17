@@ -34,7 +34,7 @@ namespace Diaggregator
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             _sourceBlock.Post(
-                $"{logLevel.ToString().ToUpperInvariant()}: {_categoryName}[{eventId.Id}{Environment.NewLine}" + 
+                $"{logLevel.ToString().ToUpperInvariant()}: {_categoryName}[{eventId.Id}{Environment.NewLine}]" + 
                 $"{formatter(state, exception)}" + Environment.NewLine);
         }
     }
