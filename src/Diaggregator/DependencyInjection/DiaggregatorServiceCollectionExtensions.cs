@@ -3,8 +3,11 @@
 
 using System;
 using Diaggregator;
+using Diaggregator.DataStreams;
 using Diaggregator.Endpoints;
 using Diaggregator.Mvc;
+using GraphQL;
+using GraphQL.Http;
 using Microsoft.AspNetCore.Dispatcher;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -38,8 +41,13 @@ namespace Microsoft.Extensions.DependencyInjection
                 return new DataStreamEndpointHandler(registry, "configuration", "Configuration", "configuration");
             });
             services.AddSingleton<DiaggregatorItem, EndpointsEndpointHandler>();
+            services.AddSingleton<DiaggregatorItem, GraphQLEndpointHandler>();
             services.AddSingleton<DiaggregatorItem, LogStreamEndpointHandler>();
             services.AddSingleton<DiaggregatorItem, LogsEndpointHandler>();
+
+            // GraphQL
+            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
+            services.AddSingleton<IDocumentWriter>(new DocumentWriter(indent: true));
 
             return services;
         }

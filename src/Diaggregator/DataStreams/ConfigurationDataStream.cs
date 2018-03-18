@@ -8,12 +8,12 @@ using System.Threading.Tasks.Dataflow;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 
-namespace Diaggregator
+namespace Diaggregator.DataStreams
 {
     internal class ConfigurationDataStream : IDataStreamLifetime
     {
         private readonly IConfiguration _configuration;
-        private BroadcastBlock<IReadOnlyDictionary<string, object>> _block;
+        private BroadcastBlock<IEnumerable<ConfigurationEntry>> _block;
         private IDisposable _subscription;
 
         public ConfigurationDataStream(IConfiguration configuration)
@@ -33,7 +33,7 @@ namespace Diaggregator
                 throw new ArgumentNullException(nameof(registry));
             }
 
-            _block = new BroadcastBlock<IReadOnlyDictionary<string, object>>(i => i);
+            _block = new BroadcastBlock<IEnumerable<ConfigurationEntry>>(i => i);
             registry.Register("configuration", _block.AsObservable());
 
             _block.Post(GetValues());
@@ -58,14 +58,27 @@ namespace Diaggregator
             _block = null;
         }
 
-        private IReadOnlyDictionary<string, object> GetValues()
+        private ConfigurationEntry[] GetValues()
         {
-            return _configuration.GetChildren().ToDictionary(s => s.Key, Convert);
+            var entries = new List<ConfigurationEntry>();
+            AddEntries(entries, "", _configuration);
+            return entries.OrderBy(e => e.Key).ToArray();
         }
 
-        private static object Convert(IConfigurationSection section)
+        private void AddEntries(List<ConfigurationEntry> entries, string prefix, IConfiguration section)
         {
-            return (object)section.Value ?? section.GetChildren().ToDictionary(c => c.Key, Convert);
+            foreach (var child in section.GetChildren())
+            {
+                var key = prefix == string.Empty ? child.Key : prefix + "." + child.Key;
+                if (child.Value != null)
+                {
+                    entries.Add(new ConfigurationEntry(key, child.Value));
+                }
+                else
+                {
+                    AddEntries(entries, key, child);
+                }       
+            }
         }
     }
 }

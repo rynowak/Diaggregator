@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 
-namespace Diaggregator
+namespace Diaggregator.DataStreams
 {
     internal class DiaggregatorHostedService : IHostedService
     {

@@ -29,11 +29,26 @@ namespace Diaggregator
             {
                 var item = _items[i];
                 Endpoints.Add(new HttpEndpoint(
-                    "/diag/" + (item.Template ?? item.Name),
+                    GetTemplate(item),
                     item.Invoke,
                     item.DisplayName,
                     item.GetType().GetCustomAttributes(inherit: true)));
             }
+        }
+
+        private string GetTemplate(DiaggregatorItem item)
+        {
+            if (item.Template == null)
+            {
+                return "/diag/" + item.Name; 
+            }
+
+            if (item.Template.StartsWith("~/") || item.Template.StartsWith("/"))
+            {
+                return item.Template;
+            }
+
+            return "/diag/" + item.Template;
         }
     }
 }

@@ -9,6 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
+            "justMyCode": false,
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/sample/DiaggregatorApp/bin/Debug/netcoreapp2.0/DiaggregatorApp.dll",
             "args": [],

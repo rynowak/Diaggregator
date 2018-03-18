@@ -4,6 +4,7 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using Diaggregator.DataStreams;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 

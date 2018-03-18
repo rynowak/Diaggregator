@@ -16,9 +16,7 @@ namespace DiaggregatorApp
             services.AddDiaggregator();
             services.AddMvc();
 
-            #region SHHHHH
             services.AddMvc(options => options.Conventions.Add(new TurnOffMvcAuthorizationSupport()));
-            #endregion
 
             services
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -49,11 +47,11 @@ namespace DiaggregatorApp
 
             app.UseAuthentication();
 
-            #region SHHHHHH
             app.UseAuthorization();
-            #endregion
 
             app.UseStaticFiles();
+
+            app.UseGraphiQl("graphiql");
         }
     }
 }
